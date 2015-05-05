@@ -2,7 +2,7 @@
 import os
 import time
 import shutil
-def renombrarYMover(origen,destino):
+def renombrarYMover(origen,destino,totalesFotos,totalesPeliculas):
 	fecha = time.strftime("%Y-%m-%d")
 	print 'fecha ' + fecha
 	print 'origen ' + origen
@@ -14,14 +14,20 @@ def renombrarYMover(origen,destino):
    		nombre.strip()
    		nn='' 
    		nn=fecha + '_' + nombre + '.jpg'
+   		print 'nombre de la foto ' + nn
    		os.rename(fn,nn)
    		shutil.move(fn,destino)
+   		totalesFotos += 1
    	if fn[-4:] == ".avi":
    		nombre=fn[0:-4:]
    		#eliminamos espacios en blanco a izq y dcha
    		nombre.strip()
    		nombre.lstrip('[]')
+   		print 'nombre de la pelicula ' + nombre
    		os.rename(fn,nombre)
+   		totalesPeliculas += 1
+   	totales = 'Fotos movidas: ' + totalesFotos + ' / Películas movidas: ' totalesPeliculas 
+   	return totales
  #Comienzo del programa
  #si el argumento correspondiente a origen es null se coge el directorio en actual
 if sys.argv[1] != null:
@@ -33,5 +39,7 @@ if sys.argv[2] != null:
 	destino = sys.argv[2]
 else:
 	destino = os.getcwd()
-	
-renombrarYMover(origen,destino)
+totalesFotos = 0
+totalesPeliculas = 0
+totales = renombrarYMover(origen,destino,totalesFotos,totalesPeliculas)
+print totales
