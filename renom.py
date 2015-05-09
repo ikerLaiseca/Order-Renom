@@ -3,10 +3,39 @@ import os
 import time
 import shutil
 import sys
+def series(nombreFichero):
+  print 'mp4'
+  if nombreFichero[:6] == 'Hawaii':
+    #Hawaii.Five-0.2010.S03E10.HDTV.x264-LOL.[VTV].mp4
+    print 'Serie Hawaii Five-0'
+    #S03
+    temporada = nombreFichero[19:22]
+    print 'Temporada: ' + temporada;
+    #E10
+    capitulo = nombreFichero[22:25]
+    print 'Capitulo ' + capitulo
+    #nombre definitivo que se le va a dar al capitulo
+    nombreDefinitivo = 'Hawaii Five-0 ' + temporada +capitulo + '.mp4'
+    rename(nombreDefinitivo,nombreFichero)
+    print 'nombre del capitulo: ' + nombreDefinitivo
+    directorio = os.path.join('series',temporada)
+    directorio = directorio.replace('\n', '')
+    moveCap(nombreDefinitivo,directorio)
+def moveCap(nombreDefinitivo,directorio):
+  print 'directorio: ' + directorio
+  if not os.path.isdir(directorio):
+    print 'no existe el directorio, creando...'
+    os.makedirs(directorio)
+    shutil.move(nombreDefinitivo, directorio)
+  else:
+    print 'el directorio existe, moviendo...'
+    shutil.move(nombreDefinitivo, directorio)
+def rename(nombreDefinitivo,nombreFichero):
+  os.rename(nombreFichero,nombreDefinitivo)
 def renombrarYMover(origen,destino):
    fecha = time.strftime("%Y-%m-%d")
    totalesFotos = 0
-   totalesPeliculas = 0
+   totalesCapitulos = 0
    print 'fecha ' + fecha
    for fn in os.listdir(origen):
       if fn[-4:] == ".jpg":
@@ -20,38 +49,9 @@ def renombrarYMover(origen,destino):
         shutil.move(fn,destino)
         totalesFotos += 1
       if fn[-4:] == ".mp4":
-        print 'mp4'
-        #Hawaii.Five-0.2010.S03E10.HDTV.x264-LOL.[VTV].mp4
-        nombre=fn[0:-4:]
-        #eliminamos espacios en blanco a izq y dcha
-        #nombre.strip()
-        #nombre.lstrip('[]')
-        #Hawaii.Five-0.2010.S03E10.HDTV.x264-LOL.
-        print 'nombre[:6] ' +nombre[:6]
-        if nombre[:6] == 'Hawaii':
-          print 'Hawaii'
-          print fn
-          rutaCarpeta = 'Hawaii Five-0/'
-          #S03
-          temporada = fn[19:22]
-          print 'Temporada: ' + temporada;
-          #E10
-          capitulo = fn[22:25]
-          print 'Capitulo ' + capitulo
-          nombre = 'Hawaii Five-0 ' + temporada +capitulo + '.mp4'
-          os.rename(fn,nombre)
-          directorio = os.path.join('series',temporada)
-          directorio = directorio.replace('\n', '')
-          print 'directorio: ' + directorio
-          if not os.path.isdir(directorio):
-            print 'not'
-            os.makedirs(directorio)
-            shutil.move(nombre, directorio)
-          else:
-            print 'yes'
-        print 'nombre de la pelicula ' + nombre
-        totalesPeliculas += 1
-   totales = 'Fotos movidas: ' + str(totalesFotos) + ' / Peliculas movidas: ' + str(totalesPeliculas) 
+        series(fn)
+        totalesCapitulos += 1
+   totales = 'Fotos movidas: ' + str(totalesFotos) + ' / Capitulos movidos: ' + str(totalesCapitulos) 
    return totales
  #Comienzo del programa
  #si el argumento correspondiente a origen es null se coge el directorio en actual
