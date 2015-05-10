@@ -3,16 +3,22 @@ import os
 import time
 import shutil
 import sys
+import re
 def series(nombreFichero):
   print 'mp4'
   if nombreFichero[:6] == 'Hawaii':
     #Hawaii.Five-0.2010.S03E10.HDTV.x264-LOL.[VTV].mp4
+    p = re.compile(ur'[S]\d\d[E]\d\d')
+    objTempCap = re.search(p, nombreFichero)
+    #S03E10
+    temporadaCapitulo = objTempCap.group()
+    print 'temporadaCapitulo' + temporadaCapitulo
     print 'Serie Hawaii Five-0'
     #S03
-    temporada = nombreFichero[19:22]
+    temporada = temporadaCapitulo[:3]
     print 'Temporada: ' + temporada;
     #E10
-    capitulo = nombreFichero[22:25]
+    capitulo = temporadaCapitulo[3:6]
     print 'Capitulo ' + capitulo
     #nombre definitivo que se le va a dar al capitulo
     nombreDefinitivo = 'Hawaii Five-0 ' + temporada +capitulo + '.mp4'
