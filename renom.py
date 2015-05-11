@@ -6,27 +6,33 @@ import sys
 import re
 def series(nombreFichero):
   print 'mp4'
-  if nombreFichero[:6] == 'Hawaii':
-    #Hawaii.Five-0.2010.S03E10.HDTV.x264-LOL.[VTV].mp4
-    p = re.compile(ur'[S]\d\d[E]\d\d')
-    objTempCap = re.search(p, nombreFichero)
-    #S03E10
-    temporadaCapitulo = objTempCap.group()
-    print 'temporadaCapitulo' + temporadaCapitulo
-    print 'Serie Hawaii Five-0'
-    #S03
-    temporada = temporadaCapitulo[:3]
-    print 'Temporada: ' + temporada;
-    #E10
-    capitulo = temporadaCapitulo[3:6]
-    print 'Capitulo ' + capitulo
-    #nombre definitivo que se le va a dar al capitulo
-    nombreDefinitivo = 'Hawaii Five-0 ' + temporada +capitulo + '.mp4'
-    rename(nombreDefinitivo,nombreFichero)
-    print 'nombre del capitulo: ' + nombreDefinitivo
-    directorio = os.path.join('series',temporada)
-    directorio = directorio.replace('\n', '')
-    moveCap(nombreDefinitivo,directorio)
+  #Hawaii.Five-0.2010.S03E10.HDTV.x264-LOL.[VTV].mp4
+  p = re.compile(ur'[S]\d\d[E]\d\d')
+  objTempCap = re.search(p, nombreFichero)
+  #S03E10
+  temporadaCapitulo = objTempCap.group()
+  posicionTempCap = nombreFichero.find(temporadaCapitulo)
+  nombreSerie = nombreFichero[:posicionTempCap]
+  #quitamos el anyo del nombre de la serie para que en el nombre final del capitulo no aprezca
+  nombreSerie = nombreSerie[:-6]
+  #cambiamos los puntos por espacios 
+  nombreSerie = nombreSerie.replace(".", " ");
+  print 'nombreSerie: ' + nombreSerie
+  print 'posicionTempCap: ' + str(posicionTempCap)
+  print 'temporadaCapitulo: ' + temporadaCapitulo
+  #S03
+  temporada = temporadaCapitulo[:3]
+  print 'Temporada: ' + temporada;
+  #E10
+  capitulo = temporadaCapitulo[3:6]
+  print 'Capitulo: ' + capitulo
+  #nombre definitivo que se le va a dar al capitulo
+  nombreDefinitivo = nombreSerie + " " + temporada +capitulo + '.mp4'
+  rename(nombreDefinitivo,nombreFichero)
+  print 'nombre del capitulo: ' + nombreDefinitivo
+  directorio = os.path.join('series',nombreSerie,temporada)
+  directorio = directorio.replace('\n', '')
+  moveCap(nombreDefinitivo,directorio)
 def moveCap(nombreDefinitivo,directorio):
   print 'directorio: ' + directorio
   if not os.path.isdir(directorio):
