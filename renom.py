@@ -154,7 +154,7 @@ def renombrarYMover(origen,destino):
    for (path, ficheros, archivos) in os.walk("."):
      pathEnCurso = path
      for fn in archivos:
-       if (fn[-4:] == ".mp4") | (fn[-4:] == ".mkv") | (fn[-4:] == ".avi"):
+       if (fn[-4:] == ".mp4") | (fn[-4:] == ".mkv") | (fn[-4:] == ".avi") | (fn[-5:] == ".mpeg"):
          p = re.compile(ur'[Ss]\d\d[Ee]\d\d')
          objTempCap = re.search(p, fn)
          if objTempCap is None:
@@ -184,3 +184,4 @@ destino = os.getcwd()
 print 'destino ' + destino
 totales = renombrarYMover(origen,destino)
 print totales
+raw_input("press enter to exit ;)")
