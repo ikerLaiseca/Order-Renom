@@ -7,6 +7,42 @@ import time
 import shutil
 import sys
 import re
+import pyexiv2
+def moverFotos(nombreFichero,origen):
+  srcOrigen = os.path.join(origen,nombreFichero)
+  print "srcOrigen" +srcOrigen
+  nombreFecha = meta(srcOrigen)
+  nombreFecha = nombreFecha.replace(":", "-")
+  nombreFecha = nombreFecha[:10]
+  nombreDefinitivo = nombreFecha + "_" + nombreFichero
+  srcDestino = os.path.join(origen,nombreDefinitivo)
+  rename(srcDestino,srcOrigen)
+  directorio = os.path.join(nombreFecha)
+  directorio = directorio.replace('\n', '')
+  moveCap(srcDestino,directorio)
+
+
+def meta(archivo):
+    #Se crea la instancia metadata al pasarle el archivo que se quiere analizar
+    metadata = pyexiv2.ImageMetadata(archivo)
+    #Se lee el metadato
+    metadata.read()
+     #Se muestra en pantalla un mensaje
+
+    print "Se muestra la informacion exif del archivo %s" %archivo
+
+    print  "---------------------------------------------"
+
+    #Se despliega la informacion de metadatos exif que contiene la imagen
+
+    for metadato in metadata.exif_keys:
+
+        texto = metadato + ": " + metadata[metadato].raw_value
+
+        print texto
+    fechaCaptura = metadata["Exif.Photo.DateTimeOriginal"].raw_value
+    print "fechaCaptura" +fechaCaptura
+    return fechaCaptura
 
 def ordenarManualmente(nombreFichero,origen):
   directorio = os.path.join('Ordenar Manualmente')
@@ -154,24 +190,29 @@ def renombrarYMover(origen,destino):
    for (path, ficheros, archivos) in os.walk("."):
      pathEnCurso = path
      for fn in archivos:
-       if (fn[-4:] == ".mp4") | (fn[-4:] == ".mkv") | (fn[-4:] == ".avi") | (fn[-5:] == ".mpeg"):
-         p = re.compile(ur'[Ss]\d\d[Ee]\d\d')
-         objTempCap = re.search(p, fn)
-         if objTempCap is None:
-           objTempCap = re.search(p, path)
-         if objTempCap is not None:
-           series(fn,path)
-           totalesCapitulos += 1
+       if (fn != "Order&Renom.py"):
+         if (fn[-4:] == ".mp4") | (fn[-4:] == ".mkv") | (fn[-4:] == ".avi") | (fn[-5:] == ".mpeg"):
+           p = re.compile(ur'[Ss]\d\d[Ee]\d\d')
+           objTempCap = re.search(p, fn)
+           if objTempCap is None:
+             objTempCap = re.search(p, path)
+           if objTempCap is not None:
+             series(fn,path)
+             totalesCapitulos += 1
+           else:
+             peliculas(fn,path)
+             totalesPeliculas += 1
          else:
-           peliculas(fn,path)
-           totalesPeliculas += 1
-       else:
-          if fn[-4:] == ".srt":
-            subtitulos(fn,path)
-            totalesSubtitulos +=1
-          else:
-            ordenarManualmente(fn,path)
-            totalesManual += 1
+            if (fn[-4:] == ".JPG") | (fn[-5:] == ".jpeg"):
+              moverFotos(fn,path)
+              totalesFotos +=1
+            else:
+              if fn[-4:] == ".srt":
+                subtitulos(fn,path)
+                totalesSubtitulos +=1
+              else:
+                ordenarManualmente(fn,path)
+                totalesManual += 1
    totales = 'Fotos movidas: ' + str(totalesFotos) + ' / Capitulos movidos: ' + str(totalesCapitulos) + ' / Subtitulos movidos: ' + str(totalesSubtitulos) + ' / Peliculas movidos: ' + str(totalesPeliculas) + ' / Orden manual: ' + str(totalesManual)
    return totales
  #Comienzo del programa
